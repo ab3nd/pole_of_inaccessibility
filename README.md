@@ -1,2 +1,17 @@
 # pole_of_inaccessibility
 A pole of inaccessability is the point furthest from a given means of access. For land travel, it's Point Nemo in the South Pacific. This code is for finding poles of inaccessibility.
+
+More specifically, the get_data notebook gets the bounding box of the White Mountain National Forest (WMNF), and then gets all the roads in the bbox, all the roads + trails in the bbox, and the perimeter of the WMNF. 
+
+The wmnf_pole notebook gets the Voronoi tesselation of the road points (or road + trail points). A property of Voronoi tesselations is that one of the verticies (where cell edges meet) is the point at the center of the largest empty circle, which is to say the circle with none of the original points of the input to the tesselation (the centroids) in it. 
+
+That means that if you use the points on roads as the seed points for the tesselation, one of the verticies is the point furthest from a road. This code does the tesselation, and then iterates the vertices, and for each vertex, records the minimum distance between the vertex and its centroid. The vertex with the largest minimum distance (LMD) is the center of the largest empty circle. 
+
+There are a _lot_ of caveats to all this. First, the vertex with the LMD could be a vertex on the convex hull of the region rather than a Voronoi cell intersection vertex. I dealt with this by doing an unbounded Voronoi tesselation and then ignoring points in cells that had vertices at infinity, which throws out all the edge cells. Second, in a place like the WMNF, "hard to get to" and "far from roads" are not really related, if you consider metrics like elevation gain and difficulty of traversing terrain. This is ignored and the code acts like the WMNF is locally flat. Third, while the WMNF isn't locally flat, it isn't globally flat either. I did use geographiclib to try to get arc distances instead of straight line distances, but it's still an approximation. All maps are wrong, some maps are useful. 
+
+For the White Mountain National Forest, the point furthest from roads _and_ trails appears to be
+(44.559893582993, -71.44843552532974) which is 101.36m from the nearest trail or road. Those are a lot of spurious decimal places of precision, but it seems like a decent approximation. That point is north and west of Mt Cabot, somewhere near Hutchins Mountain. Looking at an Appalchain Mountain Club map confirms that it is inconveniently far from roads and trails, but the best approach is probably from Mill Brook Road or Lost Nation Road. 
+
+If you just consider roads and ignore trails, the point is (44.12841076839555, -71.487294847406) which is 141.30m from the nearest road. It's about 2600' up the side of the hill between the Thoreau Falls Trail and the Shoal Pond Trail. This one really highlights the difference between "ease of access" and "proximity to roads". The entire approach to this is along the Pemi East Side Trail and Wilderness Trail, which parallel the Pemigewasset river and have about 500 feet of elevation gain over about 8 miles (essentially flat), and then another 600 feet of elevation gain to the "pole of inaccessability". It may be far from roads, but it's basically a leisurely walk in the woods. 
+
+So that's where you can find poles of inaccessability in the White Mountains. Enjoy, and don't end up in a Ty Gagne book!
